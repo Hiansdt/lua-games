@@ -5,7 +5,7 @@ local curQuad = nil
 local walkSpriteTime = 0.075
 local idleSpriteTime = 0.2
 local jumpSpriteTime = 0.05
-local attackSpriteTime = 0.1
+local attackSpriteTime = 0.15
 
 local walkSpriteTimer = 0
 local idleSpriteTimer = 0
@@ -33,6 +33,7 @@ function love.load()
     player.isJumping = false
     player.isAttacking4 = false
     player.isWalking = false
+    player.blinkTimes = 0
     floor.x = 0
     floor.y = 500
     floor.width = love.graphics.getWidth()
@@ -110,6 +111,7 @@ function love.keypressed(key)
         player.vy = -20
         player.jumps = player.jumps + 1
         curQuad = quad1Jump
+        player.isIdle = false
         player.isJumping = true
     elseif key == "right" or key == "left" and not player.isJumping then
         curQuad = quad1Walk
@@ -129,9 +131,10 @@ end
 
 function love.update(dt)
 
-    if player.isIdle and idleSpriteAnimationTimer > 5 then
+    if player.isIdle then
         idleSpriteTimer = idleSpriteTimer + dt
-        if idleSpriteTimer > idleSpriteTime then
+        idleSpriteAnimationTimer = idleSpriteAnimationTimer + dt
+        if idleSpriteTimer > idleSpriteTime and idleSpriteAnimationTimer > 3 and player.blinkTimes < 1 then
             if curQuad == quad1Idle then
                 curQuad = quad2Idle
             elseif curQuad == quad2Idle then
@@ -142,11 +145,15 @@ function love.update(dt)
                 curQuad = quad5Idle
             elseif curQuad == quad5Idle then
                 curQuad = quad1Idle
-            elseif curQuad then
-                curQuad = quad1Idle
+                player.blinkTimes = player.blinkTimes + 1
             end
             idleSpriteTimer = idleSpriteTimer - idleSpriteTime
         end
+    end
+
+    if idleSpriteAnimationTimer > 5 then
+        idleSpriteAnimationTimer = 0
+        player.blinkTimes = 0
     end
 
     if love.keyboard.isDown("right") and player.isWalking then
@@ -241,7 +248,6 @@ function love.update(dt)
     if player.isIdle == false and not love.keyboard.isDown("right") and not love.keyboard.isDown("left") and not player.isJumping and not player.isAttacking then
         player.isIdle = true
         curQuad = quad1Idle
-        idleSpriteAnimationTimer = idleSpriteAnimationTimer + dt
     end
 
     if player.isAttacking then
@@ -336,14 +342,10 @@ function love.update(dt)
                 curQuad = quad1Idle
                 totalAttacks = 0
                 currentAttack = 1
+                AttacksDone = 0
             end
             attackSpriteTimer = attackSpriteTimer - attackSpriteTime
         end
-    end
-
-    if player.isAttacking == false then
-        notAttackingTimer = notAttackingTimer + dt
-    else notAttackingTimer = 0
     end
 
     player.vy = player.vy + gravity * dt
@@ -402,9 +404,19 @@ function love.draw()
 
     love.graphics.rectangle("fill", floor.x, floor.y, floor.width, floor.height)
 
-    if player.isAttacking then
-        love.graphics.print("Jumping", 0, 0)
+    love.graphics.setColor(0, 0, 0)
+
+    if player.isIdle then
+        love.graphics.print("Idle", 0, 0)
     else
-        love.graphics.print("Not Jumping", 0, 0)
+        love.graphics.print("Not Idle", 0, 0)
     end
+
+    love.graphics.print("Attacks Done: " .. AttacksDone, 0, 20)
+    love.graphics.print("Total Attacks: " .. totalAttacks, 0, 40)
+    love.graphics.print("Current Attack: " .. currentAttack, 0, 60)
+    love.graphics.print("Attack Sprite Timer: " .. attackSpriteTimer, 0, 80)
+    love.graphics.print("Attack Sprite Time: " .. attackSpriteTime, 0, 100)
+    love.graphics.print("Idle sprite animation timer: " .. idleSpriteTimer, 0, 120)
+    love.graphics.print("Idle sprite animation time: " .. idleSpriteTime, 0, 140)
 end
