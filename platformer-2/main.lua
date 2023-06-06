@@ -121,18 +121,18 @@ function love.load()
 end
 
 function love.keypressed(key)
-    if key == "up" and player.jumps < 2 then
+    if key == "space" and player.jumps < 2 or key == "w" and player.jumps < 2 then
         player.vy = -20
         player.jumps = player.jumps + 1
         curQuad = quad1Jump
         player.isIdle = false
         player.isJumping = true
-    elseif key == "right" or key == "left" and not player.isJumping then
+    elseif key == "d" or key == "a" and not player.isJumping then
         curQuad = quad1Walk
         player.isIdle = false
         player.isAttacking = false
         player.isWalking = true
-    elseif key == "down" then
+    elseif key == "x" then
         if player.isAttacking == false then
             curQuad = quad1Attacking1
         end
@@ -171,7 +171,7 @@ function love.update(dt)
         player.blinkTimes = 0
     end
 
-    if love.keyboard.isDown("right") then
+    if love.keyboard.isDown("d") then
         player.vx = 200
         player.x = player.x + player.vx * dt
         walkSpriteTimer = walkSpriteTimer + dt
@@ -203,7 +203,7 @@ function love.update(dt)
         end
     end
 
-    if love.keyboard.isDown("left") then
+    if love.keyboard.isDown("a") then
         player.vx = -200
         player.x = player.x + player.vx * dt
         player.vx = 0
@@ -260,7 +260,7 @@ function love.update(dt)
         end
     end
 
-    if player.isIdle == false and not love.keyboard.isDown("right") and not love.keyboard.isDown("left") and
+    if player.isIdle == false and not love.keyboard.isDown("d") and not love.keyboard.isDown("a") and
         not player.isJumping and not player.isAttacking then
         player.isIdle = true
         player.isWalking = false
@@ -398,6 +398,26 @@ function love.draw()
 
     if player.isIdle then
         love.graphics.draw(idleSpriteSheet, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+    elseif player.isJumping and player.isAttacking then
+        if currentAttack == 1 then
+            love.graphics.draw(attackingSpriteSheet1, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 2 then
+            love.graphics.draw(attackingSpriteSheet2, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 3 then
+            love.graphics.draw(attackingSpriteSheet3, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 4 then
+            love.graphics.draw(attackingSpriteSheet4, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        end
+    elseif player.isAttacking and player.isWalking then
+        if currentAttack == 1 then
+            love.graphics.draw(attackingSpriteSheet1, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 2 then
+            love.graphics.draw(attackingSpriteSheet2, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 3 then
+            love.graphics.draw(attackingSpriteSheet3, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        elseif currentAttack == 4 then
+            love.graphics.draw(attackingSpriteSheet4, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
+        end
     elseif player.isJumping then
         love.graphics.draw(jumpSpriteSheet, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
     elseif player.isAttacking then
