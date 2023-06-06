@@ -3,9 +3,9 @@ local floor = {}
 local gravity = 100
 local curQuad = nil
 local walkSpriteTime = 0.075
-local idleSpriteTime = 0.2
+local idleSpriteTime = 0.15
 local jumpSpriteTime = 0.05
-local attackSpriteTime = 0.15
+local attackSpriteTime = 0.07
 
 local walkSpriteTimer = 0
 local idleSpriteTimer = 0
@@ -79,29 +79,43 @@ function love.load()
 
     quad1Attacking4 = love.graphics.newQuad(0, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
     quad2Attacking4 = love.graphics.newQuad(quadWidth, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad3Attacking4 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad4Attacking4 = love.graphics.newQuad(quadWidth * 3, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad5Attacking4 = love.graphics.newQuad(quadWidth * 4, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad6Attacking4 = love.graphics.newQuad(quadWidth * 5, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad7Attacking4 = love.graphics.newQuad(quadWidth * 6, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad8Attacking4 = love.graphics.newQuad(quadWidth * 7, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad9Attacking4 = love.graphics.newQuad(quadWidth * 8, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
-    quad10Attacking4 = love.graphics.newQuad(quadWidth * 9, 0, quadWidth, quadHeight, attackingSpriteSheet4:getDimensions())
+    quad3Attacking4 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad4Attacking4 = love.graphics.newQuad(quadWidth * 3, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad5Attacking4 = love.graphics.newQuad(quadWidth * 4, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad6Attacking4 = love.graphics.newQuad(quadWidth * 5, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad7Attacking4 = love.graphics.newQuad(quadWidth * 6, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad8Attacking4 = love.graphics.newQuad(quadWidth * 7, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad9Attacking4 = love.graphics.newQuad(quadWidth * 8, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
+    quad10Attacking4 = love.graphics.newQuad(quadWidth * 9, 0, quadWidth, quadHeight,
+        attackingSpriteSheet4:getDimensions())
 
     quad1Attacking3 = love.graphics.newQuad(0, 0, quadWidth, quadHeight, attackingSpriteSheet3:getDimensions())
     quad2Attacking3 = love.graphics.newQuad(quadWidth, 0, quadWidth, quadHeight, attackingSpriteSheet3:getDimensions())
-    quad3Attacking3 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight, attackingSpriteSheet3:getDimensions())
+    quad3Attacking3 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight,
+        attackingSpriteSheet3:getDimensions())
 
     quad1Attacking2 = love.graphics.newQuad(0, 0, quadWidth, quadHeight, attackingSpriteSheet2:getDimensions())
     quad2Attacking2 = love.graphics.newQuad(quadWidth, 0, quadWidth, quadHeight, attackingSpriteSheet2:getDimensions())
-    quad3Attacking2 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight, attackingSpriteSheet2:getDimensions())
+    quad3Attacking2 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight,
+        attackingSpriteSheet2:getDimensions())
 
     quad1Attacking1 = love.graphics.newQuad(0, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
     quad2Attacking1 = love.graphics.newQuad(quadWidth, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
-    quad3Attacking1 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
-    quad4Attacking1 = love.graphics.newQuad(quadWidth * 3, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
-    quad5Attacking1 = love.graphics.newQuad(quadWidth * 4, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
-    quad6Attacking1 = love.graphics.newQuad(quadWidth * 5, 0, quadWidth, quadHeight, attackingSpriteSheet1:getDimensions())
+    quad3Attacking1 = love.graphics.newQuad(quadWidth * 2, 0, quadWidth, quadHeight,
+        attackingSpriteSheet1:getDimensions())
+    quad4Attacking1 = love.graphics.newQuad(quadWidth * 3, 0, quadWidth, quadHeight,
+        attackingSpriteSheet1:getDimensions())
+    quad5Attacking1 = love.graphics.newQuad(quadWidth * 4, 0, quadWidth, quadHeight,
+        attackingSpriteSheet1:getDimensions())
+    quad6Attacking1 = love.graphics.newQuad(quadWidth * 5, 0, quadWidth, quadHeight,
+        attackingSpriteSheet1:getDimensions())
 
     curQuad = quad1Idle
 end
@@ -119,13 +133,14 @@ function love.keypressed(key)
         player.isAttacking = false
         player.isWalking = true
     elseif key == "down" then
-        if currentAttack == 1 then
+        if player.isAttacking == false then
             curQuad = quad1Attacking1
+        end
+
         totalAttacks = totalAttacks + 1
         player.attacks = player.attacks + 1
         player.isIdle = false
         player.isAttacking = true
-        end
     end
 end
 
@@ -134,7 +149,7 @@ function love.update(dt)
     if player.isIdle then
         idleSpriteTimer = idleSpriteTimer + dt
         idleSpriteAnimationTimer = idleSpriteAnimationTimer + dt
-        if idleSpriteTimer > idleSpriteTime and idleSpriteAnimationTimer > 3 and player.blinkTimes < 1 then
+        if idleSpriteTimer > idleSpriteTime and idleSpriteAnimationTimer > 2 and player.blinkTimes < 1 then
             if curQuad == quad1Idle then
                 curQuad = quad2Idle
             elseif curQuad == quad2Idle then
@@ -147,16 +162,16 @@ function love.update(dt)
                 curQuad = quad1Idle
                 player.blinkTimes = player.blinkTimes + 1
             end
-            idleSpriteTimer = idleSpriteTimer - idleSpriteTime
+            idleSpriteTimer = 0
         end
     end
 
-    if idleSpriteAnimationTimer > 5 then
+    if idleSpriteAnimationTimer > 3 then
         idleSpriteAnimationTimer = 0
         player.blinkTimes = 0
     end
 
-    if love.keyboard.isDown("right") and player.isWalking then
+    if love.keyboard.isDown("right") then
         player.vx = 200
         player.x = player.x + player.vx * dt
         walkSpriteTimer = walkSpriteTimer + dt
@@ -188,7 +203,7 @@ function love.update(dt)
         end
     end
 
-    if love.keyboard.isDown("left") and player.isWalking then
+    if love.keyboard.isDown("left") then
         player.vx = -200
         player.x = player.x + player.vx * dt
         player.vx = 0
@@ -245,8 +260,11 @@ function love.update(dt)
         end
     end
 
-    if player.isIdle == false and not love.keyboard.isDown("right") and not love.keyboard.isDown("left") and not player.isJumping and not player.isAttacking then
+    if player.isIdle == false and not love.keyboard.isDown("right") and not love.keyboard.isDown("left") and
+        not player.isJumping and not player.isAttacking then
         player.isIdle = true
+        player.isWalking = false
+        idleSpriteAnimationTimer = 0
         curQuad = quad1Idle
     end
 
@@ -339,6 +357,7 @@ function love.update(dt)
             if AttacksDone == totalAttacks then
                 player.isAttacking = false
                 player.isIdle = true
+                player.isWalking = false
                 curQuad = quad1Idle
                 totalAttacks = 0
                 currentAttack = 1
@@ -391,9 +410,13 @@ function love.draw()
         elseif currentAttack == 4 then
             love.graphics.draw(attackingSpriteSheet4, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
         end
-    elseif player.isWalking then
+    end
+    if player.isWalking and not player.isJumping then
         love.graphics.draw(walkingSpriteSheet, curQuad, player.x, player.y, 0, 1, 1, 0, 0)
     end
+
+    ---00821272039
+    ---MDP8J91
 
     -- Convert hex color code to RGB values
     local hexColor = "#FF0000" -- Red color
@@ -417,6 +440,10 @@ function love.draw()
     love.graphics.print("Current Attack: " .. currentAttack, 0, 60)
     love.graphics.print("Attack Sprite Timer: " .. attackSpriteTimer, 0, 80)
     love.graphics.print("Attack Sprite Time: " .. attackSpriteTime, 0, 100)
-    love.graphics.print("Idle sprite animation timer: " .. idleSpriteTimer, 0, 120)
+    love.graphics.print("Idle sprite timer: " .. idleSpriteTimer, 0, 120)
     love.graphics.print("Idle sprite animation time: " .. idleSpriteTime, 0, 140)
+    love.graphics.print("Idle sprite animation timer:" .. idleSpriteAnimationTimer, 0, 160)
+    love.graphics.print("Is Walking: " .. tostring(player.isWalking), 0, 180)
+    love.graphics.print("Is Jumping: " .. tostring(player.isJumping), 0, 200)
+    love.graphics.print("Is Attacking: " .. tostring(player.isAttacking), 0, 220)
 end
